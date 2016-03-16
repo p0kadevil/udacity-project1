@@ -26,15 +26,17 @@ public class PosterAdapter extends BaseAdapter
         mMovieInfos = movieInfos;
     }
 
+    public MovieInfo getMovieInfoAtIndex(int index){
+        return mMovieInfos.get(index);
+    }
+
     @Override
     public int getCount() {
         return mMovieInfos.size();
     }
 
     @Override
-    public Object getItem(int position) {
-        return null;
-    }
+    public Object getItem(int position) {return mMovieInfos.get(position);}
 
     @Override
     public long getItemId(int position) {

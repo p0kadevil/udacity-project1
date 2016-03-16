@@ -1,10 +1,12 @@
 package com.p0kadevil.popularmoviesstageone.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import com.google.gson.annotations.SerializedName;
 import java.util.ArrayList;
 
 
-public class MovieInfo
+public class MovieInfo implements Parcelable
 {
     @SerializedName("poster_path")
     private String posterPath;
@@ -34,6 +36,85 @@ public class MovieInfo
     private boolean video;
     @SerializedName("vote_average")
     private double voteAverage;
+
+    public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>(){
+        public MovieInfo createFromParcel(Parcel in) {
+            return new MovieInfo(in);
+        }
+
+        public MovieInfo[] newArray(int size) {
+            return new MovieInfo[size];
+        }
+    };
+
+    public MovieInfo(Parcel in) {
+
+        posterPath = in.readString();
+        overview = in.readString();
+        releaseDate = in.readString();
+        id = in.readInt();
+        originalTitle = in.readString();
+        originalLanguage = in.readString();
+        title = in.readString();
+        backdropPath = in.readString();
+        popularity = in.readDouble();
+        voteCount = in.readInt();
+        voteAverage = in.readDouble();
+
+        boolean[] boolArray = new boolean[2];
+        in.readBooleanArray(boolArray);
+
+        adult = boolArray[0];
+        video = boolArray[1];
+
+        int[] intArray = new int[in.readInt()];
+        in.readIntArray(intArray);
+
+        genreIds = new ArrayList<Integer>();
+
+        for(int i=0; i<intArray.length; i++)
+        {
+            genreIds.add(intArray[i]);
+        }
+    }
+
+    @Override
+    public int describeContents()
+    {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags)
+    {
+        dest.writeString(posterPath);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+        dest.writeInt(id);
+        dest.writeString(originalTitle);
+        dest.writeString(originalLanguage);
+        dest.writeString(title);
+        dest.writeString(backdropPath);
+        dest.writeDouble(popularity);
+        dest.writeInt(voteCount);
+        dest.writeDouble(voteAverage);
+
+        boolean[] boolArray = new boolean[2];
+        boolArray[0] = adult;
+        boolArray[1] = video;
+
+        dest.writeBooleanArray(boolArray);
+
+        int[] intArray = new int[genreIds.size()];
+
+        for(int i=0; i<genreIds.size(); i++)
+        {
+            intArray[i] = genreIds.get(i);
+        }
+
+        dest.writeInt(genreIds.size());
+        dest.writeIntArray(intArray);
+    }
 
     public String getPosterPath()
     {
@@ -110,8 +191,7 @@ public class MovieInfo
         return originalLanguage;
     }
 
-    public void setOriginalLanguage(String originalLanguage)
-    {
+    public void setOriginalLanguage(String originalLanguage) {
         this.originalLanguage = originalLanguage;
     }
 

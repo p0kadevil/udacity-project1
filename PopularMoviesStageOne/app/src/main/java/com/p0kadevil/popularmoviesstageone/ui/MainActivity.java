@@ -1,10 +1,11 @@
-package com.p0kadevil.popularmoviesstageone;
+package com.p0kadevil.popularmoviesstageone.ui;
 
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import com.google.gson.Gson;
+import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
 import com.p0kadevil.popularmoviesstageone.models.MovieDbResponse;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
@@ -21,6 +23,8 @@ import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
 public class MainActivity extends AppCompatActivity
 {
     public static final String TAG = MainActivity.class.getSimpleName();
+
+    public static final String EXTRA_MOVIE_DETAIL_OBJECT = "EXTRA_MOVIE_DETAIL_OBJECT";
 
     private MovieDbResultReceiver mMovieDbResultReceiver;
     private PosterAdapter mPosterAdapter;
@@ -41,7 +45,10 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                //TODO: Details Screen
+
+                Intent detailActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
+                detailActivityIntent.putExtra(EXTRA_MOVIE_DETAIL_OBJECT, mPosterAdapter.getMovieInfoAtIndex(position));
+                startActivity(detailActivityIntent);
             }
         });
     }
