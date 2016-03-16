@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PopularMoviesStageOne</string>
+    <string name="please_wait">Please wait</string>
+    <string name="loading_get_images">Loading the latest movies&#8230;</string>
+</resources>
