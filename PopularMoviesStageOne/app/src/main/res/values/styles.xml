@@ -1,11 +1,39 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="movieDetailTitle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">@dimen/detail_activity_title_size</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/detail_activity_title_height</item>
+        <item name="android:background">@color/colorMovieDetailTitle</item>
+        <item name="android:paddingLeft">@dimen/detail_activity_title_left_padding</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="movieDetailInfoText">
+        <item name="android:textColor">@color/colorMovieDetailInfoText</item>
+        <item name="android:textSize">@dimen/detail_activity_info_text_lg_size</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="movieDetailInfoOverviewText" parent="movieDetailInfoText">
+        <item name="android:layout_marginTop">@dimen/detail_activity_info_overview_top_margin</item>
+        <item name="android:textSize">@dimen/detail_activity_info_text_sm_size</item>
+        <item name="android:paddingLeft">@dimen/standard_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/standard_padding_horizontal</item>
+    </style>
+
+    <style name="movieDetailInfoVoteText" parent="movieDetailInfoText">
+        <item name="android:textColor">@color/colorMovieDetailInfoVoteText</item>
+        <item name="android:textSize">@dimen/detail_activity_info_text_sm_size</item>
+        <item name="android:textStyle">bold</item>
     </style>
 
 </resources>

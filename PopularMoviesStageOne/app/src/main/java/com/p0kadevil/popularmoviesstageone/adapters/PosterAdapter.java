@@ -16,7 +16,7 @@ public class PosterAdapter extends BaseAdapter
 {
     public static final String TAG = PosterAdapter.class.getSimpleName();
 
-    private static final String BASE_URL = "http://image.tmdb.org/t/p/w342/";
+    public static final String BASE_URL = "http://image.tmdb.org/t/p/w342/";
 
     private Context mContext;
     private ArrayList<MovieInfo> mMovieInfos;
