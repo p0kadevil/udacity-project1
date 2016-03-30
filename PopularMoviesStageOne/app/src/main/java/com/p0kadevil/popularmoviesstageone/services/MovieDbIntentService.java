@@ -26,7 +26,7 @@ public class MovieDbIntentService extends IntentService
     public static final String EXTRA_RESULT_JSON = "EXTRA_RESULT_JSON";
     public static final String BROADCAST_MOVIE_DB_RESULT = "com.p0kadevil.popularmoviesstageone.services.MOVIE_DB_RESULT";
 
-    private static final String API_KEY = "[YOUR_API_KEY]";
+    private static final String API_KEY = "a2b5202361c75735f9e864c96c59dbfb";
 
     private final String MOVIE_DB_POPULAR_URL = "http://api.themoviedb.org/3/movie/popular";
     private final String MOVIE_DB_TOP_RATED_URL = "http://api.themoviedb.org/3/movie/top_rated";

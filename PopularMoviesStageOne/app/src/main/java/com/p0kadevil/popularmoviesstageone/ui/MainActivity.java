@@ -63,10 +63,9 @@ public class MainActivity extends AppCompatActivity
         IntentFilter filter = new IntentFilter(MovieDbIntentService.BROADCAST_MOVIE_DB_RESULT);
         LocalBroadcastManager.getInstance(this).registerReceiver(mMovieDbResultReceiver, filter);
 
-        showProgressDialog(getResources().getString(R.string.please_wait), getResources().getString(R.string.loading_get_images));
-
         if(mMovieDbResponse == null)
         {
+            showProgressDialog(getResources().getString(R.string.please_wait), getResources().getString(R.string.loading_get_images));
             Intent movieDbIntent = new Intent(this, MovieDbIntentService.class);
             movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, MovieDbIntentService.SortFilter.POPULAR);
             startService(movieDbIntent);
