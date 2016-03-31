@@ -10,6 +10,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -18,7 +20,7 @@ import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
 import com.p0kadevil.popularmoviesstageone.models.MovieDbResponse;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
-
+import com.p0kadevil.popularmoviesstageone.util.PrefsManager;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -51,6 +53,18 @@ public class MainActivity extends AppCompatActivity
                 startActivity(detailActivityIntent);
             }
         });
+
+        int lastSortOrder = PrefsManager.getInt(this, PrefsManager.KEY_SORT_ORDER);
+
+        if(getSupportActionBar() != null)
+        {
+            String title = getString(R.string.app_name);
+            title += lastSortOrder == MovieDbIntentService.SortFilter.POPULAR.ordinal() ?
+                    " (" + getString(R.string.menu_main_sort_by_popular) + ")" :
+                    " (" + getString(R.string.menu_main_sort_by_top_rated) + ")";
+
+            getSupportActionBar().setTitle(title);
+        }
     }
 
     @Override
@@ -65,11 +79,60 @@ public class MainActivity extends AppCompatActivity
 
         if(mMovieDbResponse == null)
         {
+            int lastSortOrder = PrefsManager.getInt(this, PrefsManager.KEY_SORT_ORDER);
+
             showProgressDialog(getResources().getString(R.string.please_wait), getResources().getString(R.string.loading_get_images));
             Intent movieDbIntent = new Intent(this, MovieDbIntentService.class);
-            movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, MovieDbIntentService.SortFilter.POPULAR);
+            movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, lastSortOrder);
             startService(movieDbIntent);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if(item.getItemId() == R.id.menu_sort_order)
+        {
+            return true;
+        }
+
+        MovieDbIntentService.SortFilter selectedFilter;
+
+        switch(item.getItemId())
+        {
+            case R.id.menu_sort_popular:
+                selectedFilter = MovieDbIntentService.SortFilter.POPULAR;
+
+                if(getSupportActionBar() != null)
+                    getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + getString(R.string.menu_main_sort_by_popular) + ")");
+
+                break;
+            case R.id.menu_sort_top_rated:
+                selectedFilter = MovieDbIntentService.SortFilter.TOP_RATED;
+
+                if(getSupportActionBar() != null)
+                    getSupportActionBar().setTitle(getString(R.string.app_name) + " (" + getString(R.string.menu_main_sort_by_top_rated) + ")");
+
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+        PrefsManager.writeInt(this, PrefsManager.KEY_SORT_ORDER, selectedFilter.ordinal());
+
+        showProgressDialog(getResources().getString(R.string.please_wait), getResources().getString(R.string.loading_get_images));
+        Intent movieDbIntent = new Intent(this, MovieDbIntentService.class);
+        movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, selectedFilter.ordinal());
+        startService(movieDbIntent);
+
+        return true;
     }
 
     @Override
@@ -96,8 +159,16 @@ public class MainActivity extends AppCompatActivity
                 try
                 {
                     mMovieDbResponse = gson.fromJson(intent.getStringExtra(MovieDbIntentService.EXTRA_RESULT_JSON), MovieDbResponse.class);
-                    mPosterAdapter = new PosterAdapter(context, mMovieDbResponse.getResults());
-                    mGridView.setAdapter(mPosterAdapter);
+
+                    if(mPosterAdapter == null)
+                    {
+                        mPosterAdapter = new PosterAdapter(context, mMovieDbResponse.getResults());
+                        mGridView.setAdapter(mPosterAdapter);
+                    }
+                    else
+                    {
+                        mPosterAdapter.setDataSource(mMovieDbResponse.getResults());
+                    }
                 }
                 catch(Exception e)
                 {

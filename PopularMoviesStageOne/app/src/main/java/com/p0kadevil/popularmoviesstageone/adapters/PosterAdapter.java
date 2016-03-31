@@ -26,6 +26,12 @@ public class PosterAdapter extends BaseAdapter
         mMovieInfos = movieInfos;
     }
 
+    public void setDataSource(ArrayList<MovieInfo> movieInfos)
+    {
+        mMovieInfos = movieInfos;
+        notifyDataSetChanged();
+    }
+
     public MovieInfo getMovieInfoAtIndex(int index){
         return mMovieInfos.get(index);
     }

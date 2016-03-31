@@ -3,4 +3,7 @@
     <string name="activity_detail_label">Movie Detail</string>
     <string name="please_wait">Please wait</string>
     <string name="loading_get_images">Loading the latest movies&#8230;</string>
+    <string name="menu_main_sort_order">Sort Order</string>
+    <string name="menu_main_sort_by_popular">Most Popular</string>
+    <string name="menu_main_sort_by_top_rated">Top Rated</string>
 </resources>

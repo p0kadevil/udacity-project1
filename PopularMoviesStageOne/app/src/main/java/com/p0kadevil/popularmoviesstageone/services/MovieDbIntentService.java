@@ -46,7 +46,9 @@ public class MovieDbIntentService extends IntentService
 
             try{
 
-                URL url = new URL(intent.getIntExtra(EXTRA_SORT_FILTER, SortFilter.POPULAR.ordinal()) == SortFilter.POPULAR.ordinal() ?
+                int filter = intent.getIntExtra(EXTRA_SORT_FILTER, SortFilter.POPULAR.ordinal());
+
+                URL url = new URL(filter == SortFilter.POPULAR.ordinal() ?
                         MOVIE_DB_POPULAR_URL + "?api_key=" + API_KEY : MOVIE_DB_TOP_RATED_URL + "?api_key=" + API_KEY);
 
                 urlConnection = (HttpURLConnection) url.openConnection();
