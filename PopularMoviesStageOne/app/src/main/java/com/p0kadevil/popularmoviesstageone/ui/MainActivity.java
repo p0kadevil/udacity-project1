@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.TextView;
+
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
@@ -23,7 +24,6 @@ import com.p0kadevil.popularmoviesstageone.models.MovieInfo;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
 import com.p0kadevil.popularmoviesstageone.util.PrefsManager;
 
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity
     private MovieDbResponse mMovieDbResponse;
 
     private GridView mGridView;
+    private TextView mErrorTextView;
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mErrorTextView = (TextView) findViewById(R.id.tv_error);
         mGridView = (GridView) findViewById(R.id.gv_posters);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
@@ -80,7 +82,11 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onSaveInstanceState(Bundle outState)
     {
-        outState.putParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS, mMovieDbResponse.getResults());
+        if(mMovieDbResponse != null)
+        {
+            outState.putParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS, mMovieDbResponse.getResults());
+        }
+
         super.onSaveInstanceState(outState);
     }
 
@@ -169,6 +175,12 @@ public class MainActivity extends AppCompatActivity
         mProgressDialog = ProgressDialog.show(this, title, message, true);
     }
 
+    private void setErrorTextViewVisibility(boolean visible)
+    {
+        mErrorTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mGridView.setVisibility(visible ? View.GONE : View.VISIBLE);
+    }
+
     private class MovieDbResultReceiver extends BroadcastReceiver
     {
         @Override
@@ -181,6 +193,8 @@ public class MainActivity extends AppCompatActivity
                 try
                 {
                     mMovieDbResponse = gson.fromJson(intent.getStringExtra(MovieDbIntentService.EXTRA_RESULT_JSON), MovieDbResponse.class);
+
+                    setErrorTextViewVisibility(false);
 
                     if(mPosterAdapter == null)
                     {
@@ -196,6 +210,8 @@ public class MainActivity extends AppCompatActivity
                 {
                     Log.e(TAG, "An exception was thrown while parsing the JSON and setting the Adapter for the gridView: " + e.getMessage());
                     e.printStackTrace();
+
+                    setErrorTextViewVisibility(true);
                 }
                 finally
                 {
@@ -206,7 +222,7 @@ public class MainActivity extends AppCompatActivity
             }
             else
             {
-                //TODO: Error Screen
+                setErrorTextViewVisibility(true);
             }
         }
     }

@@ -6,6 +6,11 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
+    <TextView
+        android:id="@+id/tv_error"
+        style="@style/errorText"
+        android:visibility="gone"/>
+
     <GridView
         android:id="@+id/gv_posters"
         android:layout_width="match_parent"

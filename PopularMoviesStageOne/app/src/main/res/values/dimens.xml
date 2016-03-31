@@ -6,5 +6,6 @@
     <dimen name="detail_activity_poster_padding_top">5dp</dimen>
     <dimen name="detail_activity_info_text_lg_size">24sp</dimen>
     <dimen name="detail_activity_info_text_sm_size">18sp</dimen>
+    <dimen name="error_text_size">20sp</dimen>
     <dimen name="detail_activity_info_overview_top_margin">20dp</dimen>
 </resources>

@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+
+import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.models.MovieInfo;
 import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class PosterAdapter extends BaseAdapter
             Log.e(TAG, "An exception was thrown while downloading the image at index " + position + ": " + e.getMessage());
             e.printStackTrace();
 
-            //TODO: Default Image
+            imageView.setImageResource(R.drawable.not_found);
         }
 
 
