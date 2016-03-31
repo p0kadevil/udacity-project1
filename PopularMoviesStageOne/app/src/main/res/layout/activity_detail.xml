@@ -9,30 +9,39 @@
     <TextView
         android:id="@+id/tv_title"
         style="@style/movieDetailTitle"/>
-    <LinearLayout
-        android:orientation="horizontal"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/detail_activity_poster_padding_top">
-        <ImageView
-            android:id="@+id/iv_poster"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="@dimen/detail_activity_poster_padding_top">
+                <ImageView
+                    android:id="@+id/iv_poster"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/tv_info_year"
+                        style="@style/movieDetailInfoText"/>
+                    <TextView
+                        android:id="@+id/tv_info_vote"
+                        style="@style/movieDetailInfoVoteText"/>
+                </LinearLayout>
+            </LinearLayout>
             <TextView
-                android:id="@+id/tv_info_year"
-                style="@style/movieDetailInfoText"/>
-            <TextView
-                android:id="@+id/tv_info_vote"
-                style="@style/movieDetailInfoVoteText"/>
+                android:id="@+id/tv_info_overview"
+                style="@style/movieDetailInfoOverviewText"/>
         </LinearLayout>
-    </LinearLayout>
-    <TextView
-        android:id="@+id/tv_info_overview"
-        style="@style/movieDetailInfoOverviewText"/>
+    </ScrollView>
 </LinearLayout>
