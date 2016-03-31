@@ -19,14 +19,18 @@ import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
 import com.p0kadevil.popularmoviesstageone.models.MovieDbResponse;
+import com.p0kadevil.popularmoviesstageone.models.MovieInfo;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
 import com.p0kadevil.popularmoviesstageone.util.PrefsManager;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
 {
     public static final String TAG = MainActivity.class.getSimpleName();
 
     public static final String EXTRA_MOVIE_DETAIL_OBJECT = "EXTRA_MOVIE_DETAIL_OBJECT";
+    private static final String SAVED_INSTANCE_KEY_MOVIE_RESULTS = "mMovieDbResponseResults";
 
     private MovieDbResultReceiver mMovieDbResultReceiver;
     private PosterAdapter mPosterAdapter;
@@ -65,6 +69,19 @@ public class MainActivity extends AppCompatActivity
 
             getSupportActionBar().setTitle(title);
         }
+
+        if(savedInstanceState != null)
+        {
+            mMovieDbResponse = new MovieDbResponse();
+            mMovieDbResponse.setResults(savedInstanceState.<MovieInfo>getParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS));
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState)
+    {
+        outState.putParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS, mMovieDbResponse.getResults());
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -85,6 +102,11 @@ public class MainActivity extends AppCompatActivity
             Intent movieDbIntent = new Intent(this, MovieDbIntentService.class);
             movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, lastSortOrder);
             startService(movieDbIntent);
+        }
+        else
+        {
+            mPosterAdapter = new PosterAdapter(this, mMovieDbResponse.getResults());
+            mGridView.setAdapter(mPosterAdapter);
         }
     }
 

@@ -1,5 +1,6 @@
 package com.p0kadevil.popularmoviesstageone.ui;
 
+import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -15,6 +16,8 @@ import org.w3c.dom.Text;
 
 public class DetailActivity extends AppCompatActivity
 {
+    private static final String SAVED_INSTANCE_KEY_MOVIE = "mMovieInfo";
+
     private MovieInfo mMovieInfo;
     private TextView mTextViewTitle;
     private ImageView mImageViewPoster;
@@ -38,6 +41,10 @@ public class DetailActivity extends AppCompatActivity
         {
             mMovieInfo = getIntent().getParcelableExtra(MainActivity.EXTRA_MOVIE_DETAIL_OBJECT);
         }
+        else if(savedInstanceState != null)
+        {
+            mMovieInfo = savedInstanceState.getParcelable(SAVED_INSTANCE_KEY_MOVIE);
+        }
 
         if(getSupportActionBar() != null)
         {
@@ -45,6 +52,13 @@ public class DetailActivity extends AppCompatActivity
         }
 
         fillDetailScreen();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
+    {
+        outState.putParcelable(SAVED_INSTANCE_KEY_MOVIE, mMovieInfo);
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     @Override
