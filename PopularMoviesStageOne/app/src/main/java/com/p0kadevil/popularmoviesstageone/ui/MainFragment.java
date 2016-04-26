@@ -1,8 +1,11 @@
 package com.p0kadevil.popularmoviesstageone.ui;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,6 +32,21 @@ public class MainFragment extends Fragment
     public static MainFragment newInstance()
     {
         return new MainFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
+    {
+        inflater.inflate(R.menu.menu_activity_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override
@@ -89,6 +107,10 @@ public class MainFragment extends Fragment
         if(mPosterAdapter == null)
         {
             mPosterAdapter = new PosterAdapter(getActivity(), response.getResults());
+        }
+        else
+        {
+            mPosterAdapter.setDataSource(mMovieDbResponse.getResults());
         }
 
         mGridView.setAdapter(mPosterAdapter);

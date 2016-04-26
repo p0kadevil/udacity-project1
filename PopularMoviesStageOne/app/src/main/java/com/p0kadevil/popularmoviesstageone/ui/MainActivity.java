@@ -11,7 +11,6 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
@@ -83,13 +82,6 @@ public class MainActivity extends AppCompatActivity
         {
             getMainFragment().reloadGridViewWithPosters(mMovieDbResponse);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        getMenuInflater().inflate(R.menu.menu_activity_main, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
