@@ -30,7 +30,7 @@ public class DetailActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
+        //setContentView(R.layout.activity_detail);
 
         mTextViewTitle = (TextView) findViewById(R.id.tv_title);
         mImageViewPoster = (ImageView) findViewById(R.id.iv_poster);
@@ -38,9 +38,9 @@ public class DetailActivity extends AppCompatActivity
         mTextViewInfoVote = (TextView) findViewById(R.id.tv_info_vote);
         mTextViewInfoOverview = (TextView) findViewById(R.id.tv_info_overview);
 
-        if(getIntent() != null && getIntent().hasExtra(MainActivity.EXTRA_MOVIE_DETAIL_OBJECT))
+        if(getIntent() != null && getIntent().hasExtra(MainFragment.EXTRA_MOVIE_DETAIL_OBJECT))
         {
-            mMovieInfo = getIntent().getParcelableExtra(MainActivity.EXTRA_MOVIE_DETAIL_OBJECT);
+            mMovieInfo = getIntent().getParcelableExtra(MainFragment.EXTRA_MOVIE_DETAIL_OBJECT);
         }
         else if(savedInstanceState != null)
         {

@@ -1,24 +1,20 @@
 package com.p0kadevil.popularmoviesstageone.ui;
 
+
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
-import android.widget.TextView;
-
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
-import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
 import com.p0kadevil.popularmoviesstageone.models.MovieDbResponse;
 import com.p0kadevil.popularmoviesstageone.models.MovieInfo;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
@@ -29,15 +25,9 @@ public class MainActivity extends AppCompatActivity
 {
     public static final String TAG = MainActivity.class.getSimpleName();
 
-    public static final String EXTRA_MOVIE_DETAIL_OBJECT = "EXTRA_MOVIE_DETAIL_OBJECT";
-    private static final String SAVED_INSTANCE_KEY_MOVIE_RESULTS = "mMovieDbResponseResults";
-
     private MovieDbResultReceiver mMovieDbResultReceiver;
-    private PosterAdapter mPosterAdapter;
     private MovieDbResponse mMovieDbResponse;
 
-    private GridView mGridView;
-    private TextView mErrorTextView;
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -46,19 +36,16 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mErrorTextView = (TextView) findViewById(R.id.tv_error);
-        mGridView = (GridView) findViewById(R.id.gv_posters);
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener()
-        {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id)
-            {
+        FragmentTransaction ftMain = getSupportFragmentManager().beginTransaction();
+        ftMain.add(R.id.fl_container_left, MainFragment.newInstance(), MainFragment.TAG);
+        ftMain.commit();
 
-                Intent detailActivityIntent = new Intent(MainActivity.this, DetailActivity.class);
-                detailActivityIntent.putExtra(EXTRA_MOVIE_DETAIL_OBJECT, mPosterAdapter.getMovieInfoAtIndex(position));
-                startActivity(detailActivityIntent);
-            }
-        });
+        if(findViewById(R.id.fl_container_right) != null)
+        {
+            FragmentTransaction ftDetail = getSupportFragmentManager().beginTransaction();
+            ftDetail.add(R.id.fl_container_right, DetailFragment.newInstance(null), DetailFragment.TAG);
+            ftDetail.commit();
+        }
 
         int lastSortOrder = PrefsManager.getInt(this, PrefsManager.KEY_SORT_ORDER);
 
@@ -71,23 +58,6 @@ public class MainActivity extends AppCompatActivity
 
             getSupportActionBar().setTitle(title);
         }
-
-        if(savedInstanceState != null)
-        {
-            mMovieDbResponse = new MovieDbResponse();
-            mMovieDbResponse.setResults(savedInstanceState.<MovieInfo>getParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS));
-        }
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState)
-    {
-        if(mMovieDbResponse != null)
-        {
-            outState.putParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS, mMovieDbResponse.getResults());
-        }
-
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -111,8 +81,7 @@ public class MainActivity extends AppCompatActivity
         }
         else
         {
-            mPosterAdapter = new PosterAdapter(this, mMovieDbResponse.getResults());
-            mGridView.setAdapter(mPosterAdapter);
+            getMainFragment().reloadGridViewWithPosters(mMovieDbResponse);
         }
     }
 
@@ -170,15 +139,34 @@ public class MainActivity extends AppCompatActivity
         LocalBroadcastManager.getInstance(this).unregisterReceiver(mMovieDbResultReceiver);
     }
 
+    public void showMovieDetail(MovieInfo movieInfo)
+    {
+        if(getDetailFragment() == null)
+        {
+            FragmentTransaction ftDetail = getSupportFragmentManager().beginTransaction();
+            ftDetail.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+            ftDetail.replace(R.id.fl_container_left, DetailFragment.newInstance(movieInfo), DetailFragment.TAG);
+            ftDetail.addToBackStack(MainFragment.TAG);
+            ftDetail.commit();
+            return;
+        }
+
+        getDetailFragment().fillDetailFragmentWithMovieInfo(movieInfo);
+    }
+
+    private MainFragment getMainFragment()
+    {
+        return (MainFragment) getSupportFragmentManager().findFragmentByTag(MainFragment.TAG);
+    }
+
+    private DetailFragment getDetailFragment()
+    {
+        return (DetailFragment) getSupportFragmentManager().findFragmentByTag(DetailFragment.TAG);
+    }
+
     private void showProgressDialog(String title, String message)
     {
         mProgressDialog = ProgressDialog.show(this, title, message, true);
-    }
-
-    private void setErrorTextViewVisibility(boolean visible)
-    {
-        mErrorTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
-        mGridView.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
     private class MovieDbResultReceiver extends BroadcastReceiver
@@ -193,17 +181,12 @@ public class MainActivity extends AppCompatActivity
                 try
                 {
                     mMovieDbResponse = gson.fromJson(intent.getStringExtra(MovieDbIntentService.EXTRA_RESULT_JSON), MovieDbResponse.class);
+                    getMainFragment().setErrorTextViewVisibility(false);
+                    getMainFragment().reloadGridViewWithPosters(mMovieDbResponse);
 
-                    setErrorTextViewVisibility(false);
-
-                    if(mPosterAdapter == null)
+                    if(getDetailFragment() != null)
                     {
-                        mPosterAdapter = new PosterAdapter(context, mMovieDbResponse.getResults());
-                        mGridView.setAdapter(mPosterAdapter);
-                    }
-                    else
-                    {
-                        mPosterAdapter.setDataSource(mMovieDbResponse.getResults());
+                        getDetailFragment().fillDetailFragmentWithMovieInfo(mMovieDbResponse.getResults().get(0));
                     }
                 }
                 catch(Exception e)
@@ -211,7 +194,7 @@ public class MainActivity extends AppCompatActivity
                     Log.e(TAG, "An exception was thrown while parsing the JSON and setting the Adapter for the gridView: " + e.getMessage());
                     e.printStackTrace();
 
-                    setErrorTextViewVisibility(true);
+                    getMainFragment().setErrorTextViewVisibility(true);
                 }
                 finally
                 {
@@ -222,7 +205,7 @@ public class MainActivity extends AppCompatActivity
             }
             else
             {
-                setErrorTextViewVisibility(true);
+                getMainFragment().setErrorTextViewVisibility(true);
             }
         }
     }
