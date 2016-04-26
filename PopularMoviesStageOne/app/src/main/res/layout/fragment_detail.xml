@@ -20,7 +20,7 @@
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/detail_activity_poster_padding_top">
+                android:padding="@dimen/detail_activity_poster_padding_top">
                 <ImageView
                     android:id="@+id/iv_poster"
                     android:layout_weight="1"
@@ -30,7 +30,8 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
                     <TextView
                         android:id="@+id/tv_info_year"
                         style="@style/movieDetailInfoText"/>
