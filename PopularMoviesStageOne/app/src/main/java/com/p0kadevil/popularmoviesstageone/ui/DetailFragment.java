@@ -4,14 +4,19 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
@@ -37,6 +42,8 @@ public class DetailFragment extends Fragment
     private TextView mTextViewInfoYear;
     private TextView mTextViewInfoVote;
     private TextView mTextViewInfoOverview;
+
+    private LinearLayout mContainerTrailers;
 
     private TrailerResponse mTrailerResponse;
     private ReviewResponse mReviewResponse;
@@ -70,6 +77,7 @@ public class DetailFragment extends Fragment
         mTextViewInfoYear = (TextView) view.findViewById(R.id.tv_info_year);
         mTextViewInfoVote = (TextView) view.findViewById(R.id.tv_info_vote);
         mTextViewInfoOverview = (TextView) view.findViewById(R.id.tv_info_overview);
+        mContainerTrailers = (LinearLayout) view.findViewById(R.id.ll_container_trailers);
 
         if(savedInstanceState != null)
         {
@@ -150,14 +158,78 @@ public class DetailFragment extends Fragment
 
     private void updateTrailerView()
     {
+        //I know, I could use a ListView here
+        //But I decided not to use to avoid the problems with
+        //ScrollViews inside ScrollViews
+
+        mContainerTrailers.removeAllViews();
+
         if(mTrailerResponse == null)
         {
             return;
         }
 
-        for(TrailerInfo trailer : mTrailerResponse.getResults())
+        for(final TrailerInfo trailer : mTrailerResponse.getResults())
         {
+            LinearLayout wrapper = new LinearLayout(getActivity());
+            wrapper.setOrientation(LinearLayout.HORIZONTAL);
+            wrapper.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
 
+            ImageButton imageButton = new ImageButton(getActivity());
+            imageButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            LinearLayout.LayoutParams layoutParamsImageButton = new LinearLayout.LayoutParams(
+                    (int) getActivity().getResources().getDimension(R.dimen.play_button_size),
+                    (int) getActivity().getResources().getDimension(R.dimen.play_button_size));
+            layoutParamsImageButton.setMargins((int) getActivity().getResources().getDimension(R.dimen.play_button_margin),
+                    (int) getActivity().getResources().getDimension(R.dimen.play_button_margin),
+                    0,
+                    (int) getActivity().getResources().getDimension(R.dimen.play_button_margin));
+            layoutParamsImageButton.gravity = Gravity.CENTER_VERTICAL;
+            imageButton.setLayoutParams(layoutParamsImageButton);
+            imageButton.setImageResource(R.drawable.play_button);
+
+            imageButton.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    //TODO: BroadcastIntent for Youtube or Browser
+
+                    if(trailer.getType().equalsIgnoreCase("YOUTUBE"))
+                    {
+
+                    }
+                    else
+                    {
+
+                    }
+                }
+            });
+
+            TextView textView = new TextView(getActivity());
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+            textView.setTypeface(null, Typeface.BOLD);
+            textView.setTextColor(getActivity().getResources().getColor(R.color.colorMovieDetailInfoText));
+            textView.setText(trailer.getName());
+            LinearLayout.LayoutParams layoutParamsTextView = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParamsTextView.setMargins((int) getActivity().getResources().getDimension(R.dimen.play_button_margin), 0, 0, 0);
+            layoutParamsTextView.gravity = Gravity.CENTER_VERTICAL;
+            textView.setLayoutParams(layoutParamsTextView);
+
+            View lineView = new View(getActivity());
+            lineView.setBackgroundColor(getActivity().getResources().getColor(R.color.colorPrimary));
+            LinearLayout.LayoutParams layoutParamsLine = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 1);
+            layoutParamsLine.gravity = Gravity.TOP;
+            lineView.setLayoutParams(layoutParamsLine);
+
+            wrapper.addView(imageButton);
+            wrapper.addView(textView);
+            mContainerTrailers.addView(wrapper);
+            mContainerTrailers.addView(lineView);
         }
     }
 

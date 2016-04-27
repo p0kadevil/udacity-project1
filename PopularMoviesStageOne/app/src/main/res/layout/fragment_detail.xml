@@ -43,6 +43,12 @@
             <TextView
                 android:id="@+id/tv_info_overview"
                 style="@style/movieDetailInfoOverviewText"/>
+            <LinearLayout
+                android:id="@+id/ll_container_trailers"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

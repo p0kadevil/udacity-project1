@@ -122,7 +122,11 @@ public class MainFragment extends Fragment
     @Override
     public void onSaveInstanceState(Bundle outState)
     {
-        outState.putParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS, mMovieDbResponse.getResults());
+        if(mMovieDbResponse != null)
+        {
+            outState.putParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS, mMovieDbResponse.getResults());
+        }
+
         super.onSaveInstanceState(outState);
     }
 
