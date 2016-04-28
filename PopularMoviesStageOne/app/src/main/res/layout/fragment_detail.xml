@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="com.p0kadevil.popularmoviesstageone.ui.DetailActivity">
+    android:orientation="vertical">
     <TextView
         android:id="@+id/tv_title"
         style="@style/movieDetailTitle"/>
@@ -43,12 +41,24 @@
             <TextView
                 android:id="@+id/tv_info_overview"
                 style="@style/movieDetailInfoOverviewText"/>
+            <TextView
+                android:text="@string/trailer_head"
+                style="@style/detailHead"/>
             <LinearLayout
                 android:id="@+id/ll_container_trailers"
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"/>
+            <TextView
+                android:text="@string/review_head"
+                style="@style/detailHead"/>
+            <LinearLayout
+                android:id="@+id/ll_container_reviews"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

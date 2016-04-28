@@ -7,7 +7,6 @@
     <string name="menu_main_sort_by_popular">Most Popular</string>
     <string name="menu_main_sort_by_top_rated">Top Rated</string>
     <string name="error_text">An error occurred. Please restart the app and try again!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="trailer_head">Trailers</string>
+    <string name="review_head">Reviews</string>
 </resources>

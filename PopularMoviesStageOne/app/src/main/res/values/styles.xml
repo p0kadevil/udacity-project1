@@ -23,6 +23,16 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="detailHead">
+        <item name="android:layout_marginTop">@dimen/detail_head_margin_top</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/colorMovieDetailInfoText</item>
+        <item name="android:textSize">@dimen/detail_head_text_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginLeft">@dimen/detail_head_margin_top</item>
+    </style>
+
     <style name="movieDetailInfoOverviewText" parent="movieDetailInfoText">
         <item name="android:layout_marginTop">@dimen/detail_activity_info_overview_top_margin</item>
         <item name="android:textSize">@dimen/detail_activity_info_text_sm_size</item>

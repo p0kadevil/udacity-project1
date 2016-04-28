@@ -10,4 +10,6 @@
     <dimen name="detail_activity_info_overview_top_margin">20dp</dimen>
     <dimen name="play_button_size">44dp</dimen>
     <dimen name="play_button_margin">10dp</dimen>
+    <dimen name="detail_head_margin_top">20dp</dimen>
+    <dimen name="detail_head_text_size">18sp</dimen>
 </resources>

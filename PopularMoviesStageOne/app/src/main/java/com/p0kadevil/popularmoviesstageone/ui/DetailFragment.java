@@ -44,6 +44,7 @@ public class DetailFragment extends Fragment
     private TextView mTextViewInfoOverview;
 
     private LinearLayout mContainerTrailers;
+    private LinearLayout mContainerReviews;
 
     private TrailerResponse mTrailerResponse;
     private ReviewResponse mReviewResponse;
@@ -78,6 +79,7 @@ public class DetailFragment extends Fragment
         mTextViewInfoVote = (TextView) view.findViewById(R.id.tv_info_vote);
         mTextViewInfoOverview = (TextView) view.findViewById(R.id.tv_info_overview);
         mContainerTrailers = (LinearLayout) view.findViewById(R.id.ll_container_trailers);
+        mContainerReviews = (LinearLayout) view.findViewById(R.id.ll_container_reviews);
 
         if(savedInstanceState != null)
         {
@@ -235,6 +237,12 @@ public class DetailFragment extends Fragment
 
     private void updateReviewView()
     {
+        //I know, I could use a ListView here
+        //But I decided not to use to avoid the problems with
+        //ScrollViews inside ScrollViews
+
+        mContainerReviews.removeAllViews();
+
         if(mReviewResponse == null)
         {
             return;
@@ -242,7 +250,44 @@ public class DetailFragment extends Fragment
 
         for(ReviewInfo review : mReviewResponse.getResults())
         {
+            LinearLayout wrapper = new LinearLayout(getActivity());
+            wrapper.setOrientation(LinearLayout.VERTICAL);
+            wrapper.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT));
 
+            TextView textView = new TextView(getActivity());
+            textView.setPadding(10, 50, 10, 0);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            textView.setTextColor(getActivity().getResources().getColor(R.color.colorMovieDetailInfoText));
+            textView.setText(review.getContent());
+            LinearLayout.LayoutParams layoutParamsTextView = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            textView.setLayoutParams(layoutParamsTextView);
+
+            TextView textViewAuthor = new TextView(getActivity());
+            textViewAuthor.setPadding(0,0,10,0);
+            textViewAuthor.setGravity(Gravity.END);
+            textViewAuthor.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+            textViewAuthor.setTypeface(null, Typeface.BOLD);
+            textViewAuthor.setTextColor(getActivity().getResources().getColor(R.color.colorMovieDetailInfoText));
+            textViewAuthor.setText(review.getAuthor());
+            LinearLayout.LayoutParams layoutParamsTextViewAuthor = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
+            textViewAuthor.setLayoutParams(layoutParamsTextViewAuthor);
+
+            View lineView = new View(getActivity());
+            lineView.setBackgroundColor(getActivity().getResources().getColor(R.color.colorPrimary));
+            LinearLayout.LayoutParams layoutParamsLine = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, 1);
+            layoutParamsLine.gravity = Gravity.TOP;
+            lineView.setLayoutParams(layoutParamsLine);
+
+            wrapper.addView(textView);
+            wrapper.addView(textViewAuthor);
+            mContainerReviews.addView(wrapper);
+            mContainerReviews.addView(lineView);
         }
     }
 
