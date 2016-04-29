@@ -37,6 +37,8 @@ public class MovieInfo implements Parcelable
     @SerializedName("vote_average")
     private double voteAverage;
 
+    private ArrayList<ReviewInfo> reviews;
+
     public static final Parcelable.Creator<MovieInfo> CREATOR = new Parcelable.Creator<MovieInfo>(){
         public MovieInfo createFromParcel(Parcel in) {
             return new MovieInfo(in);
@@ -46,6 +48,17 @@ public class MovieInfo implements Parcelable
             return new MovieInfo[size];
         }
     };
+
+    public MovieInfo(int movieId, String posterPath, String originalTitle, String releaseDate,
+                     double voteAvg, String overview){
+
+        this.setId(movieId);
+        this.setPosterPath(posterPath);
+        this.setOriginalTitle(originalTitle);
+        this.setReleaseDate(releaseDate);
+        this.setVoteAverage(voteAvg);
+        this.setOverview(overview);
+    }
 
     public MovieInfo(Parcel in) {
 
@@ -70,7 +83,7 @@ public class MovieInfo implements Parcelable
         int[] intArray = new int[in.readInt()];
         in.readIntArray(intArray);
 
-        genreIds = new ArrayList<Integer>();
+        genreIds = new ArrayList<>();
 
         for(int i=0; i<intArray.length; i++)
         {
@@ -105,15 +118,18 @@ public class MovieInfo implements Parcelable
 
         dest.writeBooleanArray(boolArray);
 
-        int[] intArray = new int[genreIds.size()];
-
-        for(int i=0; i<genreIds.size(); i++)
+        if(genreIds != null)
         {
-            intArray[i] = genreIds.get(i);
-        }
+            int[] intArray = new int[genreIds.size()];
 
-        dest.writeInt(genreIds.size());
-        dest.writeIntArray(intArray);
+            for(int i = 0; i < genreIds.size(); i++)
+            {
+                intArray[i] = genreIds.get(i);
+            }
+
+            dest.writeInt(genreIds.size());
+            dest.writeIntArray(intArray);
+        }
     }
 
     public String getPosterPath()
@@ -253,5 +269,13 @@ public class MovieInfo implements Parcelable
     public void setVoteAverage(double voteAverage)
     {
         this.voteAverage = voteAverage;
+    }
+
+    public void setReviews(ArrayList<ReviewInfo> reviews) {
+        this.reviews = reviews;
+    }
+
+    public ArrayList<ReviewInfo> getReviews(){
+        return this.reviews;
     }
 }

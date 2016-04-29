@@ -17,7 +17,8 @@ public class MovieDbIntentService extends IntentService
     public enum SortFilter{
 
         POPULAR,
-        TOP_RATED
+        TOP_RATED,
+        FAVS
     }
 
     public static final String TAG = MovieDbIntentService.class.getSimpleName();

@@ -17,6 +17,12 @@ public class ReviewInfo
     @SerializedName("url")
     private String url;
 
+    public ReviewInfo(String text, String author)
+    {
+        this.content = text;
+        this.author = author;
+    }
+
     public String getId()
     {
         return id;

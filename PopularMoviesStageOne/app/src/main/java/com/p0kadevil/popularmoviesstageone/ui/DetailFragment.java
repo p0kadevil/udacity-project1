@@ -21,16 +21,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
+import com.p0kadevil.popularmoviesstageone.db.MovieRepository;
+import com.p0kadevil.popularmoviesstageone.db.ReviewRepository;
+import com.p0kadevil.popularmoviesstageone.db.TrailerRepository;
+import com.p0kadevil.popularmoviesstageone.models.MovieDbResponse;
 import com.p0kadevil.popularmoviesstageone.models.MovieInfo;
 import com.p0kadevil.popularmoviesstageone.models.ReviewInfo;
 import com.p0kadevil.popularmoviesstageone.models.ReviewResponse;
 import com.p0kadevil.popularmoviesstageone.models.TrailerInfo;
 import com.p0kadevil.popularmoviesstageone.models.TrailerResponse;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
+import com.p0kadevil.popularmoviesstageone.util.PrefsManager;
 import com.squareup.picasso.Picasso;
 
 
@@ -49,6 +53,11 @@ public class DetailFragment extends Fragment
 
     private LinearLayout mContainerTrailers;
     private LinearLayout mContainerReviews;
+
+    private ImageButton mFavButton;
+    private TextView mTextViewFav;
+
+    private boolean isFav = false;
 
     private TrailerResponse mTrailerResponse;
     private ReviewResponse mReviewResponse;
@@ -84,6 +93,8 @@ public class DetailFragment extends Fragment
         mTextViewInfoOverview = (TextView) view.findViewById(R.id.tv_info_overview);
         mContainerTrailers = (LinearLayout) view.findViewById(R.id.ll_container_trailers);
         mContainerReviews = (LinearLayout) view.findViewById(R.id.ll_container_reviews);
+        mFavButton = (ImageButton) view.findViewById(R.id.ib_fav);
+        mTextViewFav = (TextView) view.findViewById(R.id.tv_fav);
 
         if(savedInstanceState != null)
         {
@@ -93,6 +104,36 @@ public class DetailFragment extends Fragment
         {
             mMovieInfo = getArguments().getParcelable(ARG_MOVIE_INFO_KEY);
         }
+
+        isFav = MovieRepository.isFavorite(getActivity(), mMovieInfo);
+
+        mTextViewFav.setText(isFav ? getActivity().getResources().getString(R.string.unmark_as_fav) :
+                getActivity().getResources().getString(R.string.mark_as_fav));
+
+        mFavButton.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if(isFav)
+                {
+                    if(MovieRepository.removeFavorite(getActivity(), mMovieInfo))
+                    {
+                        mTextViewFav.setText(getActivity().getResources().getString(R.string.mark_as_fav));
+                    }
+                }
+                else
+                {
+                    if(MovieRepository.addFavorite(getActivity(), mMovieInfo))
+                    {
+                        mTextViewFav.setText(getActivity().getResources().getString(R.string.unmark_as_fav));
+                    }
+                }
+
+                ((MainActivity)getActivity()).favoritesChanged();
+                getActivity().invalidateOptionsMenu();
+            }
+        });
 
         return view;
     }
@@ -104,6 +145,11 @@ public class DetailFragment extends Fragment
 
         IntentFilter filter = new IntentFilter(MovieDbIntentService.BROADCAST_TRAILERS_AND_REVIEWS_RESULT);
         LocalBroadcastManager.getInstance(getActivity()).registerReceiver(mTrailersAndReviewsReceiver, filter);
+
+        if(mMovieInfo == null)
+        {
+            return;
+        }
 
         Intent movieDbIntent = new Intent(getActivity(), MovieDbIntentService.class);
         movieDbIntent.putExtra(MovieDbIntentService.EXTRA_TRAILERS_AND_REVIEWS, true);
@@ -122,7 +168,19 @@ public class DetailFragment extends Fragment
     public void onViewCreated(View view, Bundle savedInstanceState)
     {
         super.onViewCreated(view, savedInstanceState);
-        fillDetailFragmentWithMovieInfo(mMovieInfo);
+
+        if(PrefsManager.getInt(getActivity(), PrefsManager.KEY_SORT_ORDER) ==
+                MovieDbIntentService.SortFilter.FAVS.ordinal() && mMovieInfo == null)
+        {
+            MovieDbResponse simulatedResponse = MovieRepository.getMovies(getActivity(), true);
+
+            if(simulatedResponse.getResults() != null && simulatedResponse.getResults().size() > 0)
+                fillDetailFragmentWithMovieInfo(simulatedResponse.getResults().get(0));
+        }
+        else
+        {
+            fillDetailFragmentWithMovieInfo(mMovieInfo);
+        }
     }
 
     @Override
@@ -160,6 +218,25 @@ public class DetailFragment extends Fragment
         mTextViewInfoVote.setText(voteAverage);
 
         mTextViewInfoOverview.setText(mMovieInfo.getOverview());
+
+        isFav = MovieRepository.isFavorite(getActivity(), mMovieInfo);
+
+        mTextViewFav.setText(isFav ? getActivity().getResources().getString(R.string.unmark_as_fav) :
+                getActivity().getResources().getString(R.string.mark_as_fav));
+
+        if(PrefsManager.getInt(getActivity(), PrefsManager.KEY_SORT_ORDER) !=
+                MovieDbIntentService.SortFilter.FAVS.ordinal())
+        {
+            Intent movieDbIntent = new Intent(getActivity(), MovieDbIntentService.class);
+            movieDbIntent.putExtra(MovieDbIntentService.EXTRA_TRAILERS_AND_REVIEWS, true);
+            movieDbIntent.putExtra(MovieDbIntentService.EXTRA_TRAILER_AND_REVIEW_ID, mMovieInfo.getId());
+            getActivity().startService(movieDbIntent);
+        }
+        else
+        {
+            updateTrailerView();
+            updateReviewView();
+        }
     }
 
     private void updateTrailerView()
@@ -312,6 +389,9 @@ public class DetailFragment extends Fragment
                 {
                     mTrailerResponse = gson.fromJson(intent.getStringExtra(MovieDbIntentService.EXTRA_RESULT_JSON_TRAILERS), TrailerResponse.class);
                     mReviewResponse = gson.fromJson(intent.getStringExtra(MovieDbIntentService.EXTRA_RESULT_JSON_REVIEWS), ReviewResponse.class);
+
+                    ReviewRepository.insertReviews(getActivity(), mReviewResponse.getResults(), mMovieInfo.getId());
+                    TrailerRepository.insertTrailers(getActivity(), mTrailerResponse.getResults(), mMovieInfo.getId());
 
                     updateTrailerView();
                     updateReviewView();

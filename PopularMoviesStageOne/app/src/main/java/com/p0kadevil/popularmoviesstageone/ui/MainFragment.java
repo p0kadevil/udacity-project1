@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
+import com.p0kadevil.popularmoviesstageone.db.MovieRepository;
 import com.p0kadevil.popularmoviesstageone.models.MovieDbResponse;
 import com.p0kadevil.popularmoviesstageone.models.MovieInfo;
 import com.p0kadevil.popularmoviesstageone.services.MovieDbIntentService;
@@ -28,7 +30,6 @@ import com.p0kadevil.popularmoviesstageone.util.PrefsManager;
 public class MainFragment extends Fragment
 {
     public static final String TAG = MainFragment.class.getSimpleName();
-    public static final String EXTRA_MOVIE_DETAIL_OBJECT = "EXTRA_MOVIE_DETAIL_OBJECT";
     private static final String SAVED_INSTANCE_KEY_MOVIE_RESULTS = "mMovieDbResponseResults";
 
     private MovieDbResultReceiver mMovieDbResultReceiver;
@@ -58,6 +59,12 @@ public class MainFragment extends Fragment
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater)
     {
         inflater.inflate(R.menu.menu_activity_main, menu);
+
+        MenuItem item = menu.findItem(R.id.menu_sort_favs);
+
+        if(item != null)
+            item.setVisible(MovieRepository.getMovies(getActivity(), true).getResults().size() > 0);
+
         super.onCreateOptionsMenu(menu, inflater);
     }
 
@@ -96,10 +103,25 @@ public class MainFragment extends Fragment
         {
             int lastSortOrder = PrefsManager.getInt(getParent(), PrefsManager.KEY_SORT_ORDER);
 
-            getParent().showProgressDialog(getResources().getString(R.string.please_wait), getResources().getString(R.string.loading_get_images));
-            Intent movieDbIntent = new Intent(getParent(), MovieDbIntentService.class);
-            movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, lastSortOrder);
-            getParent().startService(movieDbIntent);
+            if(lastSortOrder != MovieDbIntentService.SortFilter.FAVS.ordinal())
+            {
+                getParent().showProgressDialog(getResources().getString(R.string.please_wait), getResources().getString(R.string.loading_get_images));
+                Intent movieDbIntent = new Intent(getParent(), MovieDbIntentService.class);
+                movieDbIntent.putExtra(MovieDbIntentService.EXTRA_SORT_FILTER, lastSortOrder);
+                getParent().startService(movieDbIntent);
+            }
+            else
+            {
+                mMovieDbResponse = MovieRepository.getMovies(getActivity(), true);
+
+                setErrorTextViewVisibility(false);
+                reloadGridViewWithPosters(mMovieDbResponse);
+
+                if(getParent().getDetailFragment() != null)
+                {
+                    getParent().getDetailFragment().fillDetailFragmentWithMovieInfo(mMovieDbResponse.getResults().get(0));
+                }
+            }
         }
 
         return view;
@@ -141,7 +163,7 @@ public class MainFragment extends Fragment
         mGridView.setVisibility(visible ? View.GONE : View.VISIBLE);
     }
 
-    private void reloadGridViewWithPosters(MovieDbResponse response){
+    public void reloadGridViewWithPosters(MovieDbResponse response){
 
         mMovieDbResponse = response;
 
@@ -191,6 +213,7 @@ public class MainFragment extends Fragment
                 }
                 finally
                 {
+                    MovieRepository.insertMovies(getActivity(), mMovieDbResponse.getResults());
                     getParent().dismissProgressDialog();
                 }
             }
