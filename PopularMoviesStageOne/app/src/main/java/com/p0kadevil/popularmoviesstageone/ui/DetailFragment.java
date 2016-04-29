@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
@@ -18,6 +20,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.gson.Gson;
 import com.p0kadevil.popularmoviesstageone.R;
 import com.p0kadevil.popularmoviesstageone.adapters.PosterAdapter;
@@ -196,15 +200,18 @@ public class DetailFragment extends Fragment
                 @Override
                 public void onClick(View v)
                 {
-                    //TODO: BroadcastIntent for Youtube or Browser
 
-                    if(trailer.getType().equalsIgnoreCase("YOUTUBE"))
+                    Intent videoIntent = new Intent(Intent.ACTION_VIEW,
+                            Uri.parse("http://www.youtube.com/watch?v=" + trailer.getKey()));
+
+                    PackageManager packageManager = getActivity().getPackageManager();
+                    if (videoIntent.resolveActivity(packageManager) != null)
                     {
-
+                        startActivity(videoIntent);
                     }
                     else
                     {
-
+                        Toast.makeText(getActivity(), R.string.video_intent_error, Toast.LENGTH_LONG).show();
                     }
                 }
             });

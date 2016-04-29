@@ -9,4 +9,5 @@
     <string name="error_text">An error occurred. Please restart the app and try again!</string>
     <string name="trailer_head">Trailers</string>
     <string name="review_head">Reviews</string>
+    <string name="video_intent_error">You have no application installed, which is able to play this trailer.</string>
 </resources>
