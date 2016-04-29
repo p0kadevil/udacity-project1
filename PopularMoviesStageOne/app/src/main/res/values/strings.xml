@@ -10,4 +10,6 @@
     <string name="trailer_head">Trailers</string>
     <string name="review_head">Reviews</string>
     <string name="video_intent_error">You have no application installed, which is able to play this trailer.</string>
+    <string name="mark_as_fav">Mark as favorite:</string>
+    <string name="unmark_as_fav">Unmark as favorite:</string>
 </resources>

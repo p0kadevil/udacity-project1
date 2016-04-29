@@ -36,6 +36,15 @@
                     <TextView
                         android:id="@+id/tv_info_vote"
                         style="@style/movieDetailInfoVoteText"/>
+                    <TextView
+                        android:id="@+id/tv_fav"
+                        style="@style/movieDetailInfoVoteText"
+                        android:text="@string/mark_as_fav"
+                        android:layout_marginTop="40dp"/>
+                    <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/star"/>
                 </LinearLayout>
             </LinearLayout>
             <TextView

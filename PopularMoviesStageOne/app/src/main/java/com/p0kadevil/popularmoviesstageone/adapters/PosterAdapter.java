@@ -40,6 +40,12 @@ public class PosterAdapter extends BaseAdapter
 
     @Override
     public int getCount() {
+
+        if(mMovieInfos == null)
+        {
+            return 0;
+        }
+
         return mMovieInfos.size();
     }
 
