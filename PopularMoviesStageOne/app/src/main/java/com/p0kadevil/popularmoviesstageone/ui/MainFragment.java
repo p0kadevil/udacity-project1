@@ -52,6 +52,12 @@ public class MainFragment extends Fragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
+        if(savedInstanceState != null)
+        {
+            mMovieDbResponse = new MovieDbResponse();
+            mMovieDbResponse.setResults(savedInstanceState.<MovieInfo> getParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS));
+        }
+
         mMovieDbResultReceiver = new MovieDbResultReceiver();
     }
 
@@ -94,12 +100,7 @@ public class MainFragment extends Fragment
             }
         });
 
-        if(savedInstanceState != null)
-        {
-            mMovieDbResponse = new MovieDbResponse();
-            mMovieDbResponse.setResults(savedInstanceState.<MovieInfo> getParcelableArrayList(SAVED_INSTANCE_KEY_MOVIE_RESULTS));
-        }
-        else if(mMovieDbResponse == null)
+        if(mMovieDbResponse == null)
         {
             int lastSortOrder = PrefsManager.getInt(getParent(), PrefsManager.KEY_SORT_ORDER);
 

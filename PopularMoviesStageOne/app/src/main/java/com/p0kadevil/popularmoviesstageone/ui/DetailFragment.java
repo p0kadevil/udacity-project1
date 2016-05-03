@@ -130,6 +130,8 @@ public class DetailFragment extends Fragment
                     }
                 }
 
+                isFav = !isFav;
+
                 ((MainActivity)getActivity()).favoritesChanged();
                 getActivity().invalidateOptionsMenu();
             }

@@ -2,6 +2,7 @@ package com.p0kadevil.popularmoviesstageone.ui;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.PersistableBundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,6 +53,12 @@ public class MainActivity extends AppCompatActivity
 
             getSupportActionBar().setTitle(title);
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState)
+    {
+        super.onSaveInstanceState(outState, outPersistentState);
     }
 
     @Override
